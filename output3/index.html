@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Javascript Web Output #3</title>
+<style>
+#dataTable {
+  width: 80%;
+  border-collapse: collapse;
+  margin: 20px auto;
+  font-weight: bold;
+}
+
+#dataTable th, #dataTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#dataTable th {
+  background-color: #f2f2f2;
+}
+
+#dataTable tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+#dataTable td:nth-child(4) {
+  text-align: center;
+}
+</style>
+</head>
+<body>
+
+<h1>Javascript Web Output #3</h1>
+<p>API: <a href="https://jsonplaceholder.typicode.com/todos/">https://jsonplaceholder.typicode.com/todos/</a></p>
+
+<button id="loadData">Load data from the API</button>
+<button id="clearTable">Clear Table</button>
+<table id="dataTable"></table>
+
+<script>
+const apiUrl = 'https://jsonplaceholder.typicode.com/todos/';
+const dataTable = document.getElementById('dataTable');
+const loadDataButton = document.getElementById('loadData');
+const clearTableButton = document.getElementById('clearTable');
+let dataLoaded = false;
+
+loadDataButton.addEventListener('click', () => {
+  if (!dataLoaded) {
+    dataLoaded = true;
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+        dataTable.innerHTML = '';
+        let headerRow = dataTable.insertRow();
+        ['User ID', 'Task ID', 'Title', 'Status'].forEach(header => {
+          let headerCell = headerRow.insertCell();
+          headerCell.textContent = header;
+        });
+        data.forEach(item => {
+          let row = dataTable.insertRow();
+          let cells = [item.userId, item.id, item.title, item.completed ? 'Completed' : 'Not yet Completed'];
+          cells.forEach((cellData, index) => {
+            let cell = row.insertCell();
+            cell.textContent = cellData;
+            if (index === 3) {
+              cell.style.color = item.completed ? 'green' : 'red';
+            }
+          });
+        });
+      })
+      .catch(error => console.error('Error:', error));
+  } else {
+    alert('Data already loaded. Please clear the table to reload.');
+  }
+});
+
+clearTableButton.addEventListener('click', () => {
+  dataTable.innerHTML = '';
+  dataLoaded = false;
+});
+</script>
+
+</body>
+</html>
